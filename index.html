@@ -1,0 +1,37 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        div {
+            border: 1px outset red;
+            width: 50px;
+            text-align: center;
+        }
+    </style>
+    <script src="./my-stupid-react.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script>
+         function Child(props) {
+            return React.createElement("div", props.text);
+        }
+
+        var data = ["1", "2", "3"];
+        
+        function App() {
+            return data.map(text => Child({text: text}))
+        }
+
+        function myRender() {
+            React.render(App, document.getElementById("root"));
+        }
+
+        function edit() {
+            data = ["2", "3"];
+        }
+
+    </script>
+</body>
+</html>
