@@ -21,14 +21,15 @@
         function App(props) {
             const [ data, setData ] = React.useState(["1", "2", "3"]);
 
-            //setData(["1", "2"]);
+            setData(["1", "2"]);
+
             // return React.createElement('div', {},
             //     React.createElement('button', { onClick: setData(["1", "2"]) }, 'Update State'),
             //     data.map(datum => (
             //         React.createElement(Child, {}, datum)
             //     ))
             // );
-            return "";
+            return data.join("");
         }
         
         React.render(React.createElement(App), document.getElementById("root"));

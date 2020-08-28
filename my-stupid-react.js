@@ -7,29 +7,38 @@ window.React = window.React || {
     currentElementState: undefined,
     currentElement: undefined,
 
-    render: function(rootComponent, target) {
-        var index = 0;
+    called: 0,
+    
+    // render: function(rootComponent, target) {
+    //     var index = 0;
 
-        var toBeRendered = rootComponent();
-        for (const childComponent of toBeRendered) {
-            if (target.children) {
-                var original = target.children[index];
+    //     var toBeRendered = rootComponent();
+    //     for (const childComponent of toBeRendered) {
+    //         if (target.children) {
+    //             var original = target.children[index];
 
-                if (original && original.innerText != childComponent.hash) {
-                    window.React.removeElement(original);
-                }
-            }
+    //             if (original && original.innerText != childComponent.hash) {
+    //                 window.React.removeElement(original);
+    //             }
+    //         }
             
-            if (window.React.componentStore[childComponent.hash] === false) {
-                window.React.componentStore[childComponent.hash] = true;
-                target.appendChild(childComponent.element);
-            }
+    //         if (window.React.componentStore[childComponent.hash] === false) {
+    //             window.React.componentStore[childComponent.hash] = true;
+    //             target.appendChild(childComponent.element);
+    //         }
 
-            index++;
-        }
+    //         index++;
+    //     }
 
-        for (var i = toBeRendered.length; i < target.children.length; i++) {
-            window.React.removeElement(target.children[i]);
+    //     for (var i = toBeRendered.length; i < target.children.length; i++) {
+    //         window.React.removeElement(target.children[i]);
+    //     }
+    // },
+
+    render: function(rootComponent, target) {
+        debugger;
+        for (const childComponent of rootComponent()) {
+            console.log(childComponent);
         }
     },
 
@@ -39,34 +48,58 @@ window.React = window.React || {
             this.currentElement = document.createElement(elementName);
             element.innerText = innerText;
         } else if (typeof elementToCreate == typeof console.log) {
-            this.currentElement = elementToCreate();
+            this.componentFunction = elementToCreate;
+            var currentElement = this._wrappedSetFunction();
+            if (this.called == 1) {
+                debugger;
+                this.currentElement = currentElement;
+            }
         }
 
-        var returnObj = {
-            element: element,
-            hash: window.React.fakehash(innerText)
-        };
+        return () => {
+            return this.currentElement;
+        }
 
-        window.React.componentStore[returnObj.hash] = 
-            !window.React.componentStore[returnObj.hash] ? 
-            false 
-            : 
-            window.React.componentStore[returnObj.hash]; // not yet renderered
+        // var returnObj = {
+        //     element: element,
+        //     hash: window.React.fakehash(innerText)
+        // };
 
-        return returnObj;
+        // window.React.componentStore[returnObj.hash] = 
+        //     !window.React.componentStore[returnObj.hash] ? 
+        //     false 
+        //     : 
+        //     window.React.componentStore[returnObj.hash]; // not yet renderered
+
+        //return returnObj;
     },
 
     useState: function(state) {
-        this.currentElementState = state;
+        if (!this.currentElementState) {
+            this.currentElementState = state;
+        }
 
         return [this.currentElementState, newState => {
-            this.currentElementState = newState;
-            this._rerender();
+            if (this._diff(newState, this.currentElementState) === false) {
+                this.currentElementState = newState;
+                this._rerender();
+            }
         }];
     },
 
     _rerender: function() {
-        alert("rerender");
+        this.currentElement = this._wrappedSetFunction();
+    },
+
+    // true if same
+    _diff: function(a, b) {
+        return JSON.stringify(a) == JSON.stringify(b)
+    },
+
+    componentFunction: undefined,
+    _wrappedSetFunction: function() {
+        this.called++;
+        return this.componentFunction();
     },
 
     fakehash: function(text) {
