@@ -14,24 +14,24 @@
 <body>
     <div id="root"></div>
     <script>
-         function Child(props) {
-            return React.createElement("div", props.text);
+        function Child(props) {
+            return React.createElement("div", {}, props.children);
         }
 
-        var data = ["1", "2", "3"];
+        function App(props) {
+            const [ data, setData ] = React.useState(["1", "2", "3"]);
+
+            //setData(["1", "2"]);
+            // return React.createElement('div', {},
+            //     React.createElement('button', { onClick: setData(["1", "2"]) }, 'Update State'),
+            //     data.map(datum => (
+            //         React.createElement(Child, {}, datum)
+            //     ))
+            // );
+            return "";
+        }
         
-        function App() {
-            return data.map(text => Child({text: text}))
-        }
-
-        function myRender() {
-            React.render(App, document.getElementById("root"));
-        }
-
-        function edit() {
-            data = ["2", "3"];
-        }
-
+        React.render(React.createElement(App), document.getElementById("root"));
     </script>
 </body>
 </html>

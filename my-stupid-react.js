@@ -1,5 +1,11 @@
+"use strict";
+
+
 window.React = window.React || {
     componentStore: { },
+
+    currentElementState: undefined,
+    currentElement: undefined,
 
     render: function(rootComponent, target) {
         var index = 0;
@@ -27,9 +33,14 @@ window.React = window.React || {
         }
     },
 
-    createElement: function(elementName, innerText) {
-        var element = document.createElement(elementName);
-        element.innerText = innerText;
+    createElement: function(elementToCreate, innerText) {
+        this.currentElement = undefined;
+        if (typeof elementToCreate == typeof "") {
+            this.currentElement = document.createElement(elementName);
+            element.innerText = innerText;
+        } else if (typeof elementToCreate == typeof console.log) {
+            this.currentElement = elementToCreate();
+        }
 
         var returnObj = {
             element: element,
@@ -45,6 +56,19 @@ window.React = window.React || {
         return returnObj;
     },
 
+    useState: function(state) {
+        this.currentElementState = state;
+
+        return [this.currentElementState, newState => {
+            this.currentElementState = newState;
+            this._rerender();
+        }];
+    },
+
+    _rerender: function() {
+        alert("rerender");
+    },
+
     fakehash: function(text) {
         return text.toLowerCase();
     },
@@ -53,12 +77,3 @@ window.React = window.React || {
         element && element.parentNode && element.parentNode.removeChild(element);
     }
 };
-
-// 1 2 
-// 2 3
-// 3
-
-// 2 2 
-// 3 3
-
-// 123 13
